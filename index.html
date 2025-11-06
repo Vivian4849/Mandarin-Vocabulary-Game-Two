@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>词汇分配游戏 - 可下载版本</title>
+    <title>数字分配游戏</title>
     <style>
         * {
             box-sizing: border-box;
@@ -70,7 +70,7 @@
             margin-bottom: 10px;
         }
         
-        .word-display {
+        .number-display {
             background: linear-gradient(135deg, #4776E6 0%, #8E54E9 100%);
             color: white;
             border-radius: 12px;
@@ -80,13 +80,13 @@
             box-shadow: 0 5px 15px rgba(71, 118, 230, 0.3);
         }
         
-        .word-label {
+        .number-label {
             font-size: 1rem;
             margin-bottom: 10px;
             opacity: 0.9;
         }
         
-        .word {
+        .number {
             font-size: 2.5rem;
             font-weight: 700;
             letter-spacing: 2px;
@@ -119,13 +119,6 @@
         
         .action-btn:active {
             transform: translateY(0);
-        }
-        
-        .action-btn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
         
         .instructions {
@@ -173,12 +166,12 @@
             font-size: 1.3rem;
         }
         
-        .word-input-group {
+        .number-input-group {
             display: flex;
             margin-bottom: 15px;
         }
         
-        .word-input {
+        .number-input {
             flex: 1;
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -196,15 +189,20 @@
             font-size: 16px;
         }
         
-        .word-list {
+        .number-list {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 15px;
             margin-bottom: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
         }
         
-        .word-item {
+        .number-item {
             background-color: #4776E6;
             color: white;
             padding: 8px 15px;
@@ -269,23 +267,26 @@
             background: #e74c3c;
         }
         
-        .download-section {
-            padding: 15px;
-            background-color: #e8f4fd;
-            border-radius: 8px;
-            margin-top: 15px;
-            text-align: center;
+        .quick-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 15px;
         }
         
-        .download-btn {
-            background: #2ecc71;
+        .quick-number-btn {
+            background: #95a5a6;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 0.9rem;
-            margin: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .quick-number-btn:hover {
+            background: #7f8c8d;
         }
         
         @media (max-width: 480px) {
@@ -305,7 +306,7 @@
                 padding: 20px 15px;
             }
             
-            .word {
+            .number {
                 font-size: 2rem;
             }
         }
@@ -314,29 +315,29 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>词汇分配游戏</h1>
-            <div class="subtitle">点击按钮获取您的专属词汇</div>
+            <h1>数字分配游戏</h1>
+            <div class="subtitle">随机不重复数字选择系统</div>
         </div>
         
         <div class="content">
             <div class="student-info">
                 <div class="student-id" id="studentId">等待分配学生ID</div>
-                <div class="status" id="status">准备获取词汇</div>
+                <div class="status" id="status">准备获取数字</div>
             </div>
             
-            <div class="word-display">
-                <div class="word-label">您的词汇是：</div>
-                <div class="word" id="wordDisplay">-</div>
+            <div class="number-display">
+                <div class="number-label">您的数字是：</div>
+                <div class="number" id="numberDisplay">-</div>
             </div>
             
-            <button class="action-btn" id="getWordBtn">获取我的词汇</button>
+            <button class="action-btn" id="getNumberBtn">获取我的数字</button>
             <button class="action-btn" id="resetBtn" style="display: none;">重新分配</button>
             
             <div class="instructions">
                 <h3>使用说明</h3>
                 <ol>
-                    <li>点击"获取我的词汇"按钮，系统会为您分配一个专属词汇</li>
-                    <li>每个学生获得的词汇都是不同的</li>
+                    <li>点击"获取我的数字"按钮，系统会为您分配一个专属数字</li>
+                    <li>每个学生获得的数字都是不同的</li>
                     <li>如需重新分配，请点击"重新分配"按钮</li>
                 </ol>
             </div>
@@ -344,22 +345,33 @@
             <!-- 教师管理区域 -->
             <div class="teacher-section" id="teacherSection">
                 <h2>教师管理</h2>
-                <div class="word-input-group">
-                    <input type="text" class="word-input" id="wordInput" placeholder="输入一个新词汇">
-                    <button class="add-btn" id="addWordBtn">添加</button>
-                </div>
-                <div class="word-list" id="wordList">
-                    <!-- 词汇将在这里显示 -->
-                </div>
-                <div class="teacher-controls">
-                    <button class="teacher-btn" id="assignAllBtn">为所有学生分配词汇</button>
-                    <button class="teacher-btn clear-btn" id="clearAssignmentsBtn">清除所有分配</button>
+                
+                <div class="number-input-group">
+                    <input type="text" class="number-input" id="numberInput" placeholder="输入一个数字（1-100）">
+                    <button class="add-btn" id="addNumberBtn">添加</button>
                 </div>
                 
-                <div class="download-section">
-                    <h3>下载功能</h3>
-                    <button class="download-btn" id="downloadHTMLBtn">下载HTML文件</button>
-                    <button class="download-btn" id="downloadWordsBtn">导出词汇列表</button>
+                <div class="quick-numbers">
+                    <button class="quick-number-btn" data-number="1">1</button>
+                    <button class="quick-number-btn" data-number="2">2</button>
+                    <button class="quick-number-btn" data-number="3">3</button>
+                    <button class="quick-number-btn" data-number="4">4</button>
+                    <button class="quick-number-btn" data-number="5">5</button>
+                    <button class="quick-number-btn" data-number="6">6</button>
+                    <button class="quick-number-btn" data-number="7">7</button>
+                    <button class="quick-number-btn" data-number="8">8</button>
+                    <button class="quick-number-btn" data-number="9">9</button>
+                    <button class="quick-number-btn" data-number="10">10</button>
+                    <button class="quick-number-btn" data-number="11">11</button>
+                </div>
+                
+                <div class="number-list" id="numberList">
+                    <!-- 数字将在这里显示 -->
+                </div>
+                
+                <div class="teacher-controls">
+                    <button class="teacher-btn" id="assignAllBtn">为所有学生分配数字</button>
+                    <button class="teacher-btn clear-btn" id="clearAssignmentsBtn">清除所有分配</button>
                 </div>
                 
                 <div class="message" id="message"></div>
@@ -367,31 +379,29 @@
         </div>
         
         <div class="footer">
-            词汇分配系统 &copy; 2023 - 可下载版本
+            数字分配系统 &copy; 2023
         </div>
     </div>
 
     <script>
         // 初始化变量
-        let words = [];
+        let numbers = [];
         let studentId = null;
-        let assignedWords = {};
+        let assignedNumbers = {};
         const studentCount = 11;
         
         // DOM元素
         const studentIdElement = document.getElementById('studentId');
         const statusElement = document.getElementById('status');
-        const wordDisplay = document.getElementById('wordDisplay');
-        const getWordBtn = document.getElementById('getWordBtn');
+        const numberDisplay = document.getElementById('numberDisplay');
+        const getNumberBtn = document.getElementById('getNumberBtn');
         const resetBtn = document.getElementById('resetBtn');
         const teacherSection = document.getElementById('teacherSection');
-        const wordInput = document.getElementById('wordInput');
-        const addWordBtn = document.getElementById('addWordBtn');
-        const wordList = document.getElementById('wordList');
+        const numberInput = document.getElementById('numberInput');
+        const addNumberBtn = document.getElementById('addNumberBtn');
+        const numberList = document.getElementById('numberList');
         const assignAllBtn = document.getElementById('assignAllBtn');
         const clearAssignmentsBtn = document.getElementById('clearAssignmentsBtn');
-        const downloadHTMLBtn = document.getElementById('downloadHTMLBtn');
-        const downloadWordsBtn = document.getElementById('downloadWordsBtn');
         const message = document.getElementById('message');
         
         // 显示消息
@@ -419,223 +429,219 @@
             
             studentIdElement.textContent = `学生 ID: ${studentId}`;
             
-            // 检查是否有已分配的词汇
-            const savedAssignment = localStorage.getItem('wordAssignment');
+            // 检查是否有已分配的数字
+            const savedAssignment = localStorage.getItem('numberAssignment');
             if (savedAssignment) {
-                assignedWords = JSON.parse(savedAssignment);
+                assignedNumbers = JSON.parse(savedAssignment);
                 
-                if (assignedWords[studentId]) {
-                    wordDisplay.textContent = assignedWords[studentId];
-                    statusElement.textContent = "已分配词汇";
+                if (assignedNumbers[studentId]) {
+                    numberDisplay.textContent = assignedNumbers[studentId];
+                    statusElement.textContent = "已分配数字";
                     resetBtn.style.display = 'block';
                 }
             }
         }
         
-        // 加载词汇列表
-        function loadWords() {
-            const savedWords = localStorage.getItem('wordList');
-            if (savedWords) {
-                words = JSON.parse(savedWords);
+        // 加载数字列表
+        function loadNumbers() {
+            const savedNumbers = localStorage.getItem('numberList');
+            if (savedNumbers) {
+                numbers = JSON.parse(savedNumbers);
             } else {
-                // 默认词汇
-                words = [
-                    '勤奋', '创新', '合作', '诚实', '尊重',
-                    '责任', '友善', '勇敢', '耐心', '感恩',
-                    '自律'
-                ];
-                localStorage.setItem('wordList', JSON.stringify(words));
+                // 默认数字
+                numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+                localStorage.setItem('numberList', JSON.stringify(numbers));
             }
-            renderWordList();
+            renderNumberList();
         }
         
-        // 渲染词汇列表
-        function renderWordList() {
-            wordList.innerHTML = '';
+        // 渲染数字列表
+        function renderNumberList() {
+            numberList.innerHTML = '';
             
-            words.forEach((word, index) => {
-                const wordItem = document.createElement('div');
-                wordItem.className = 'word-item';
-                wordItem.innerHTML = `
-                    <span>${word}</span>
+            if (numbers.length === 0) {
+                numberList.innerHTML = '<p style="text-align:center;color:#666;padding:10px;">暂无数字，请添加数字</p>';
+                return;
+            }
+            
+            numbers.forEach((number, index) => {
+                const numberItem = document.createElement('div');
+                numberItem.className = 'number-item';
+                numberItem.innerHTML = `
+                    <span>${number}</span>
                     <button class="delete-btn" data-index="${index}">×</button>
                 `;
-                wordList.appendChild(wordItem);
+                numberList.appendChild(numberItem);
             });
             
             // 添加删除事件监听器
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const index = parseInt(this.getAttribute('data-index'));
-                    words.splice(index, 1);
-                    localStorage.setItem('wordList', JSON.stringify(words));
-                    renderWordList();
+                    numbers.splice(index, 1);
+                    localStorage.setItem('numberList', JSON.stringify(numbers));
+                    renderNumberList();
+                    showMessage('数字已删除', 'success');
                 });
             });
         }
         
-        // 添加词汇
-        function addWord() {
-            const word = wordInput.value.trim();
+        // 添加数字
+        function addNumber() {
+            const numberStr = numberInput.value.trim();
             
-            if (word === '') {
-                showMessage('请输入一个有效的词汇', 'error');
+            if (numberStr === '') {
+                showMessage('请输入一个有效的数字', 'error');
                 return;
             }
             
-            if (words.includes(word)) {
-                showMessage('该词汇已存在', 'error');
+            const number = parseInt(numberStr);
+            if (isNaN(number) || number < 1 || number > 100) {
+                showMessage('请输入1-100之间的有效数字', 'error');
                 return;
             }
             
-            words.push(word);
-            localStorage.setItem('wordList', JSON.stringify(words));
-            renderWordList();
-            wordInput.value = '';
-            wordInput.focus();
-            showMessage('词汇添加成功', 'success');
+            if (numbers.includes(number)) {
+                showMessage('该数字已存在', 'error');
+                return;
+            }
+            
+            numbers.push(number);
+            localStorage.setItem('numberList', JSON.stringify(numbers));
+            renderNumberList();
+            numberInput.value = '';
+            numberInput.focus();
+            showMessage('数字添加成功', 'success');
         }
         
-        // 获取词汇
-        function getWord() {
-            // 检查是否有已分配的词汇
-            const savedAssignment = localStorage.getItem('wordAssignment');
+        // 快速添加数字
+        function setupQuickNumbers() {
+            document.querySelectorAll('.quick-number-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const number = parseInt(this.getAttribute('data-number'));
+                    if (!numbers.includes(number)) {
+                        numbers.push(number);
+                        localStorage.setItem('numberList', JSON.stringify(numbers));
+                        renderNumberList();
+                        showMessage(`数字 ${number} 添加成功`, 'success');
+                    } else {
+                        showMessage('该数字已存在', 'error');
+                    }
+                });
+            });
+        }
+        
+        // 获取数字
+        function getNumber() {
+            // 检查是否有已分配的数字
+            const savedAssignment = localStorage.getItem('numberAssignment');
             if (savedAssignment) {
-                assignedWords = JSON.parse(savedAssignment);
+                assignedNumbers = JSON.parse(savedAssignment);
                 
-                if (assignedWords[studentId]) {
-                    wordDisplay.textContent = assignedWords[studentId];
-                    statusElement.textContent = "已分配词汇";
+                if (assignedNumbers[studentId]) {
+                    numberDisplay.textContent = assignedNumbers[studentId];
+                    statusElement.textContent = "已分配数字";
                     resetBtn.style.display = 'block';
-                    showMessage('您已获得词汇', 'success');
+                    showMessage('您已获得数字', 'success');
                     return;
                 }
             }
             
-            // 从本地存储加载词汇
-            const savedWords = localStorage.getItem('wordList');
-            if (!savedWords) {
-                showMessage('教师尚未设置词汇列表', 'error');
+            // 从本地存储加载数字
+            const savedNumbers = localStorage.getItem('numberList');
+            if (!savedNumbers) {
+                showMessage('教师尚未设置数字列表', 'error');
                 return;
             }
             
-            words = JSON.parse(savedWords);
+            numbers = JSON.parse(savedNumbers);
             
-            if (words.length < studentCount) {
-                showMessage(`词汇数量不足，需要至少${studentCount}个词汇`, 'error');
+            if (numbers.length < studentCount) {
+                showMessage(`数字数量不足，需要至少${studentCount}个数字`, 'error');
                 return;
             }
             
-            // 分配词汇
-            assignWords();
+            // 分配数字
+            assignNumbers();
         }
         
-        // 分配词汇
-        function assignWords() {
-            // 复制词汇数组并随机排序
-            const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+        // 分配数字
+        function assignNumbers() {
+            // 复制数字数组并随机排序
+            const shuffledNumbers = [...numbers].sort(() => Math.random() - 0.5);
             
-            // 分配词汇给学生
-            assignedWords = {};
+            // 分配数字给学生
+            assignedNumbers = {};
             for (let i = 1; i <= studentCount; i++) {
-                assignedWords[i] = shuffledWords[i - 1];
+                assignedNumbers[i] = shuffledNumbers[i - 1];
             }
             
             // 保存分配结果
-            localStorage.setItem('wordAssignment', JSON.stringify(assignedWords));
+            localStorage.setItem('numberAssignment', JSON.stringify(assignedNumbers));
             
-            // 显示当前学生的词汇
-            wordDisplay.textContent = assignedWords[studentId];
-            statusElement.textContent = "已分配词汇";
+            // 显示当前学生的数字
+            numberDisplay.textContent = assignedNumbers[studentId];
+            statusElement.textContent = "已分配数字";
             resetBtn.style.display = 'block';
             
-            showMessage('词汇分配成功！', 'success');
+            showMessage('数字分配成功！', 'success');
+        }
+        
+        // 为所有学生分配数字
+        function assignAllNumbers() {
+            if (numbers.length < studentCount) {
+                showMessage(`数字数量不足，需要至少${studentCount}个数字`, 'error');
+                return;
+            }
+            
+            assignNumbers();
+            showMessage('已为所有学生分配数字', 'success');
         }
         
         // 重置分配
         function resetAssignment() {
             // 只重置当前学生的分配
-            delete assignedWords[studentId];
-            localStorage.setItem('wordAssignment', JSON.stringify(assignedWords));
+            delete assignedNumbers[studentId];
+            localStorage.setItem('numberAssignment', JSON.stringify(assignedNumbers));
             
-            wordDisplay.textContent = '-';
-            statusElement.textContent = "准备获取词汇";
+            numberDisplay.textContent = '-';
+            statusElement.textContent = "准备获取数字";
             resetBtn.style.display = 'none';
-            showMessage('您的词汇已重置', 'success');
+            showMessage('您的数字已重置', 'success');
         }
         
         // 清除所有分配
         function clearAllAssignments() {
-            localStorage.removeItem('wordAssignment');
-            assignedWords = {};
+            localStorage.removeItem('numberAssignment');
+            assignedNumbers = {};
             
-            wordDisplay.textContent = '-';
-            statusElement.textContent = "准备获取词汇";
+            numberDisplay.textContent = '-';
+            statusElement.textContent = "准备获取数字";
             resetBtn.style.display = 'none';
             
-            showMessage('所有词汇分配已清除', 'success');
-        }
-        
-        // 下载HTML文件
-        function downloadHTML() {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '词汇分配游戏.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showMessage('HTML文件下载成功', 'success');
-        }
-        
-        // 导出词汇列表
-        function downloadWords() {
-            const wordsText = words.join('\n');
-            const blob = new Blob([wordsText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '词汇列表.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showMessage('词汇列表导出成功', 'success');
+            showMessage('所有数字分配已清除', 'success');
         }
         
         // 事件监听器
-        getWordBtn.addEventListener('click', getWord);
+        getNumberBtn.addEventListener('click', getNumber);
         resetBtn.addEventListener('click', resetAssignment);
         
-        addWordBtn.addEventListener('click', addWord);
+        addNumberBtn.addEventListener('click', addNumber);
         
-        wordInput.addEventListener('keypress', function(e) {
+        numberInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                addWord();
+                addNumber();
             }
         });
         
-        assignAllBtn.addEventListener('click', function() {
-            if (words.length < studentCount) {
-                showMessage(`词汇数量不足，需要至少${studentCount}个词汇`, 'error');
-                return;
-            }
-            
-            assignWords();
-            showMessage('已为所有学生分配词汇', 'success');
-        });
+        assignAllBtn.addEventListener('click', assignAllNumbers);
         
         clearAssignmentsBtn.addEventListener('click', clearAllAssignments);
         
-        downloadHTMLBtn.addEventListener('click', downloadHTML);
-        downloadWordsBtn.addEventListener('click', downloadWords);
-        
         // 初始化
         initializeStudent();
-        loadWords();
+        loadNumbers();
+        setupQuickNumbers();
     </script>
 </body>
 </html>
