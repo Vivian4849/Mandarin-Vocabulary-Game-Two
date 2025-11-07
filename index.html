@@ -556,31 +556,58 @@
             
             numbers = JSON.parse(savedNumbers);
             
+            // 检查是否有足够的数字
             if (numbers.length < studentCount) {
                 showMessage(`数字数量不足，需要至少${studentCount}个数字`, 'error');
                 return;
             }
             
             // 分配数字
-            assignNumbers();
+            assignNumberToStudent();
         }
         
-        // 分配数字
-        function assignNumbers() {
-            // 复制数字数组并随机排序
-            const shuffledNumbers = [...numbers].sort(() => Math.random() - 0.5);
-            
-            // 分配数字给学生
-            assignedNumbers = {};
-            for (let i = 1; i <= studentCount; i++) {
-                assignedNumbers[i] = shuffledNumbers[i - 1];
+        // 为当前学生分配数字
+        function assignNumberToStudent() {
+            // 获取已分配的数字
+            const savedAssignment = localStorage.getItem('numberAssignment');
+            if (savedAssignment) {
+                assignedNumbers = JSON.parse(savedAssignment);
+            } else {
+                assignedNumbers = {};
             }
+            
+            // 如果当前学生已经有数字，直接返回
+            if (assignedNumbers[studentId]) {
+                numberDisplay.textContent = assignedNumbers[studentId];
+                statusElement.textContent = "已分配数字";
+                resetBtn.style.display = 'block';
+                showMessage('您已获得数字', 'success');
+                return;
+            }
+            
+            // 获取已使用的数字
+            const usedNumbers = Object.values(assignedNumbers);
+            
+            // 获取可用的数字
+            const availableNumbers = numbers.filter(num => !usedNumbers.includes(num));
+            
+            if (availableNumbers.length === 0) {
+                showMessage('没有可用的数字了', 'error');
+                return;
+            }
+            
+            // 随机选择一个可用数字
+            const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+            const assignedNumber = availableNumbers[randomIndex];
+            
+            // 分配给当前学生
+            assignedNumbers[studentId] = assignedNumber;
             
             // 保存分配结果
             localStorage.setItem('numberAssignment', JSON.stringify(assignedNumbers));
             
             // 显示当前学生的数字
-            numberDisplay.textContent = assignedNumbers[studentId];
+            numberDisplay.textContent = assignedNumber;
             statusElement.textContent = "已分配数字";
             resetBtn.style.display = 'block';
             
@@ -594,7 +621,25 @@
                 return;
             }
             
-            assignNumbers();
+            // 复制数字数组并随机排序
+            const shuffledNumbers = [...numbers].sort(() => Math.random() - 0.5);
+            
+            // 分配数字给学生
+            assignedNumbers = {};
+            for (let i = 1; i <= studentCount; i++) {
+                assignedNumbers[i] = shuffledNumbers[i - 1];
+            }
+            
+            // 保存分配结果
+            localStorage.setItem('numberAssignment', JSON.stringify(assignedNumbers));
+            
+            // 如果当前学生有分配，显示其数字
+            if (assignedNumbers[studentId]) {
+                numberDisplay.textContent = assignedNumbers[studentId];
+                statusElement.textContent = "已分配数字";
+                resetBtn.style.display = 'block';
+            }
+            
             showMessage('已为所有学生分配数字', 'success');
         }
         
